@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+//TODO - Methods to implmenet: Remove, RemoveAfter, Truncate, InsertAfter, InsertBefore, After, Before
 namespace Graph
 {
 	public class Graph<T, U> : IEnumerable<T> where T : Node<U>
@@ -22,6 +22,11 @@ namespace Graph
 		{
 			nodes = new List<T>();
 		}
+
+		public Graph(T node)
+		{
+			nodes = new List<T> { node };
+		}
 		/// <summary>
 		/// Adds a node to the end of a graph. This method will
 		/// add a node to all nodes defined as the current 'end' 
@@ -29,14 +34,14 @@ namespace Graph
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>Returns true if node was successfully added.</returns>
-		public bool Add(Node<U> node)
+		public bool Add(T node)
 		{
 			var endNodes = nodes.Where(t => (t.NextNodes?.Count ?? 0) == 0);
 			if (!(nodes.Count > 0))
 			{
 				try
 				{
-					nodes.Add(node as T);
+					nodes.Add(node);
 				}
 				catch (Exception) //TODO Specify exception types.
 				{
@@ -45,9 +50,19 @@ namespace Graph
 				return true;
 			}
 
-			return !true;
-			//throw new NotImplementedException();
-
+			try
+			{
+				foreach (var terminus in endNodes)
+				{
+					terminus.NextNodes = new List<Node<U>> { node };
+				}
+				nodes.Add(node);
+			}
+			catch (Exception) //TODO Specify exception types.
+			{
+				return false;
+			}
+			return true;
 		}
 
 

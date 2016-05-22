@@ -8,14 +8,22 @@ namespace UnitTestProject1
 	public class GraphUnitTests
 	{
 		private readonly Graph<Node<int>, int> graph = new Graph<Node<int>, int>();
-		private readonly Node<int> node = new Node<int>(42);
+		private readonly Node<int> node1 = new Node<int>(42);
+
+		private readonly Node<int> node2 = new Node<int>(39);
+		private readonly Graph<Node<int>, int> graph2 = new Graph<Node<int>, int>(new Node<int>(42));
 
 		[TestMethod]
 		public void Graph_AddNode()
 		{
-			graph.Add(node);
+			Assert.IsTrue(graph.Add(node1));
+		}
 
-			Assert.IsTrue(graph.Contains(node));
+		[TestMethod]
+		public void Graph_AddNodes()
+		{
+			Assert.IsTrue(graph.Add(node2));
+
 		}
 	}
 }
