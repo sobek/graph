@@ -23,7 +23,15 @@ namespace UnitTestProject1
 		public void Graph_AddNodes()
 		{
 			Assert.IsTrue(graph.Add(node2));
-
+			graph.Add(new Node<int>(27));
 		}
+
+		[TestMethod]
+		public void Graph_ReemoveNode()
+		{
+			Assert.IsTrue(graph2.Remove(new Node<int>(42)));
+		}
+
+		
 	}
 }

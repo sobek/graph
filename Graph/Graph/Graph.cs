@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//TODO - Methods to implmenet: Remove, RemoveAfter, Truncate, InsertAfter, InsertBefore, After, Before
+//TODO - Methods to implmenet: Truncate, InsertAfter, InsertBefore
 namespace Graph
 {
-	public class Graph<T, U> : IEnumerable<T> where T : Node<U>
+	public class Graph<T, U> : IEnumerable<T> where T : Node<U> 
 	{
 		private List<T> nodes;
 
@@ -16,7 +16,6 @@ namespace Graph
 
 		public IEnumerator GetEnumerator() =>
 			nodes.GetEnumerator();
-
 
 		public Graph()
 		{
@@ -27,6 +26,7 @@ namespace Graph
 		{
 			nodes = new List<T> { node };
 		}
+
 		/// <summary>
 		/// Adds a node to the end of a graph. This method will
 		/// add a node to all nodes defined as the current 'end' 
@@ -36,7 +36,6 @@ namespace Graph
 		/// <returns>Returns true if node was successfully added.</returns>
 		public bool Add(T node)
 		{
-			var endNodes = nodes.Where(t => (t.NextNodes?.Count ?? 0) == 0);
 			if (!(nodes.Count > 0))
 			{
 				try
@@ -52,10 +51,14 @@ namespace Graph
 
 			try
 			{
+				var endNodes = nodes.Where(t => (t.NextNodes?.Count ?? 0) == 0).ToList();
+
 				foreach (var terminus in endNodes)
 				{
-					terminus.NextNodes = new List<Node<U>> { node };
+					terminus.NextNodes.Add(node);
 				}
+
+				node.PreviousNodes.AddRange(endNodes);
 				nodes.Add(node);
 			}
 			catch (Exception) //TODO Specify exception types.
@@ -65,18 +68,40 @@ namespace Graph
 			return true;
 		}
 
+		/// <summary>
+		/// Removes the first occurrence of a given node. If node occurs
+		/// in different paths, it will only be removed from the first path.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <returns>Returns true if item removed successfully.</returns>
+		public bool Remove(T node)
+		{
+			if (nodes.All(t => t != node))
+				return false;
 
-		///// <summary>
-		///// Removes the first instance of a given node. If node occurs at the same level 
-		///// in different paths, it will only be removed from the first path.
-		///// </summary>
-		///// <param name="graph"></param>
-		///// <param name="node"></param>
-		///// <returns></returns>
-		//public Graph<T> Remove(Graph<T> graph, Node<T> node)
-		//{
-		//	throw new NotImplementedException();
-		//}
+			foreach (var previousItem in nodes.Find(t => t == node).PreviousNodes)
+			{
+				previousItem.NextNodes.RemoveAll(t => t == node);
+				previousItem.NextNodes.AddRange(node.NextNodes);
+			}
+
+			foreach (var nextItem in nodes.Find(t => t == node).NextNodes)
+			{
+				nextItem.PreviousNodes.RemoveAll(t => t == node);
+				nextItem.PreviousNodes.AddRange(node.PreviousNodes);
+			}
+
+			return nodes.Remove(node);
+		}
+
+		/// <summary>
+		/// Finds the first occurrence of a node and removes the next node(s). 
+		/// If node occurs in different paths, it will only be removed from the first path.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		public bool RemoveAfter(T node) => 
+			node.NextNodes.Aggregate(true, (current, nodule) => current && Remove(nodule as T));
 	}
 
 

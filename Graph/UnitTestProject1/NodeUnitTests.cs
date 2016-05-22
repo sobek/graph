@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Graph;
 
 
-namespace UnitTestProject1
+namespace GraphTestProject
 {
 	[TestClass]
 	public class NodeUnitTests
@@ -15,6 +15,9 @@ namespace UnitTestProject1
 
 		private readonly List<Node<string>> stringPreviousNodeList = new List<Node<string>> { new Node<string>("1") };
 		private readonly List<Node<string>> stringNextNodeList = new List<Node<string>> { new Node<string>("2") };
+
+		private readonly Node<int> node1 = new Node<int>(42);
+		private readonly Node<int> node2 = new Node<int>(39);
 
 		[TestMethod]
 		public void NodeCreate_InstantiatesAllFieldsInt()
@@ -36,6 +39,16 @@ namespace UnitTestProject1
 			Assert.IsTrue(newNode.NextNodes.Count == 1);
 			Assert.IsTrue(newNode.PreviousNodes.Select(t => t.Data).Contains("1"));
 			Assert.IsTrue(newNode.NextNodes.Select(t => t.Data).Contains("2"));
+		}
+
+		[TestMethod]
+		public void Node_AreNoteEqual()
+		{
+			var testNode = new Node<int>(42);
+
+			Assert.IsTrue(testNode == node1);
+			Assert.IsTrue(node1 != node2);
+			Assert.IsTrue(testNode.Equals(node1));
 		}
 
 
