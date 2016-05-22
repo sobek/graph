@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Graph
 {
-	class Node<T>
+	public class Node<T>
 	{
 		#region constructors
 		public Node(T data, List<Node<T>> previousNodes = null, List<Node<T>> nextNodes = null)
